@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+"""Build the image in docker, cross compiling to x86 for linux."""
+import os
+import subprocess
+
+target = 'x86_64-unknown-linux-musl'
+binary_name = 'split-log'
+CARGO_TARGET_DIR = os.getenv('CARGO_TARGET_DIR', 'target')
+
+# Add the cross-compilation target
+subprocess.run(['rustup', 'target', 'add', target])
+
+# Build the cross-compiled binary
+subprocess.run(['cargo', 'build', '--release', '--target', target])
+
+# Copy the binary to the host
+binary_path = os.path.join(CARGO_TARGET_DIR, target, 'release', binary_name)
+print(f'Binary released under: {binary_path}')
